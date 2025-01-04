@@ -8,7 +8,7 @@
 
 // Convert point to string for map key
 static void point_to_key(Point p, char *key) {
-    snprintf(key, KEY_MAX_LENGTH, "%d,%d", p.column, p.row);
+    snprintf(key, KEY_MAX_LENGTH, "%d,%d", p.row, p.column);
 }
 
 // Manhattan distance heuristic
@@ -25,8 +25,20 @@ static bool is_valid_point(Point p, const field_t grid) {
 // Get valid neighbors of a point
 static a_star_err get_neighbors(Point p, const field_t grid, Point neighbors[4],
                                 int *num_neighbors) {
-    Point possible_moves[] = {
-        {p.column + 1, p.row}, {p.column - 1, p.row}, {p.column, p.row + 1}, {p.column, p.row - 1}};
+    Point possible_moves[] = {{
+            .column = (p.column + 1) % FIELD_COLS,
+            .row = p.row
+        }, {
+            .column = (FIELD_COLS + p.column - 1) % FIELD_COLS,
+            .row = p.row
+        }, {
+            .column = p.column,
+            .row = (p.row + 1) % FIELD_ROWS
+        }, {
+            .column = p.column,
+            .row = (FIELD_ROWS + p.row - 1) % FIELD_ROWS
+        }
+    };
 
     *num_neighbors = 0;
     for (int i = 0; i < 4; i++) {

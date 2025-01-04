@@ -164,8 +164,8 @@ void print_field_with_path(const field_t grid, const Path* path) {
 }
 
 int test_a_star() {
-    Point start = {1, 1};
-    Point goal = {26, 29};
+    Point start = {.row=15, .column=6};
+    Point goal = {.row=13, .column=21};
     Path path;
     
     // First print the original maze
