@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "point.h"
+#include "extra.h"
 #define MAP_VALUE_TYPE int
 
 #define MAP_SIZE 1024

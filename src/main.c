@@ -41,8 +41,8 @@ field_t field = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
-Point point_from(int x, int y) {
-    Point p = {.column = x, .row = y};
+position_t point_from(int x, int y) {
+    position_t p = {.column = x, .row = y};
     return p;
 }
 
@@ -67,7 +67,7 @@ int test_queue() {
     heap_node top_node;
     if (priority_queue_peek(&pq, &top_node) == PQ_SUCCESS) {
         printf(
-            "Peek: Priority = %d, Data = (%d,%d)\n",
+            "Peek: Priority = %d, Data = (%ld,%ld)\n",
             top_node.priority,
             top_node.data.column,
             top_node.data.row
@@ -79,7 +79,7 @@ int test_queue() {
     while (!priority_queue_is_empty(&pq)) {
         if (priority_queue_pop(&pq, &top_node) == PQ_SUCCESS) {
             printf(
-                "Pop: Priority = %d, Data = (%d,%d)\n",
+                "Pop: Priority = %d, Data = (%ld,%ld)\n",
                 top_node.priority,
                 top_node.data.column,
                 top_node.data.row
@@ -129,7 +129,7 @@ int test_map() {
     return 0;
 }
 
-void print_field_with_path(const field_t grid, const Path* path) {
+void print_field_with_path(const field_t grid, const path_t* path) {
     // Create a copy of the grid to mark the path
     field_t display_grid;
     memcpy(display_grid, grid, FIELD_ROWS * FIELD_COLS * sizeof(int));
@@ -137,7 +137,7 @@ void print_field_with_path(const field_t grid, const Path* path) {
     // Mark path on the grid copy with '2'
     if (path->length > 0) {
         for (int i = 0; i < path->length; i++) {
-            Point p = path->points[i];
+            position_t p = path->points[i];
             display_grid[p.row][p.column] = 2;
         }
     }
@@ -164,13 +164,13 @@ void print_field_with_path(const field_t grid, const Path* path) {
 }
 
 int test_a_star() {
-    Point start = {.row=15, .column=6};
-    Point goal = {.row=13, .column=21};
-    Path path;
+    position_t start = {.row=15, .column=6};
+    position_t goal = {.row=13, .column=21};
+    path_t path;
     
     // First print the original maze
     printf("\nOriginal Maze:\n");
-    print_field_with_path(field, &(Path){.length = 0});
+    print_field_with_path(field, &(path_t){.length = 0});
     
     // Find the path
     a_star_err result = a_star(start, goal, field, &path);
@@ -184,7 +184,7 @@ int test_a_star() {
             
             printf("\nPath coordinates: ");
             for (int i = 0; i < path.length; i++) {
-                printf("(%d,%d) ", path.points[i].column, path.points[i].row);
+                printf("(%ld,%ld) ", path.points[i].column, path.points[i].row);
             }
             printf("\n");
             break;

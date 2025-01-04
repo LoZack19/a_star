@@ -104,7 +104,6 @@ The grid is defined as a 2D array of `FIELD_ROWS` by `FIELD_COLS`, and each cell
 
 You can customize the following parameters by modifying the macros:
 - `MAX_PATH_LENGTH`: The maximum allowed path length.
-- `INFINITY_COST`: The cost representing an inaccessible point.
 - `MOVE_COST`: The cost to move between adjacent cells.
 
 ## Dependencies

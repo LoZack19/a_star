@@ -2,6 +2,7 @@
     "files.associations": {
         "priority_queue.h": "c",
         "cmath": "c",
+        "point.h": "c"
     },
     "editor.rulers": [80]
 }

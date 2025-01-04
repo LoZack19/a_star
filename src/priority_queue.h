@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 
-#include "point.h"
-#define PRIORITY_QUEUE_DATA_TYPE Point
+#include "extra.h"
+#define PRIORITY_QUEUE_DATA_TYPE position_t
 #define HEAP_SIZE 1024
 
 enum priority_queue_err {

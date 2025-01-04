@@ -5,6 +5,7 @@ OBJ = src/main.o
 OBJ += src/priority_queue.o
 OBJ += src/map.o
 OBJ += src/a_star.o
+OBJ += src/extra.o
 
 TARGET = main
 

@@ -1,19 +1,17 @@
 #ifndef A_STAR_H
 #define A_STAR_H
 
-#include "point.h"
+#include "extra.h"
 
 #define MAX_PATH_LENGTH 1024
-#define INFINITY_COST 99999.0
-#define MOVE_COST 1.0
-
-#define MAX_PATH_LENGTH 1024
-#define INFINITY_COST 99999.0
 #define MOVE_COST 1.0
 
 // Grid cell types
 #define CELL_PATH 0
 #define CELL_WALL 1
+
+#define IS_CELL_PATH(CELL) ((CELL) != CELL_WALL)
+#define IS_CELL_WALL(CELL) ((CELL) == CELL_WALL)
 
 // Error handling enum
 typedef enum {
@@ -27,11 +25,15 @@ typedef enum {
 } a_star_err;
 
 // Structure to hold the path
-typedef struct {
-    Point points[MAX_PATH_LENGTH];
+struct path {
+    position_t points[MAX_PATH_LENGTH];
     int length;
-} Path;
+};
 
-a_star_err a_star(Point start, Point goal, const field_t grid, Path *out_path);
+typedef struct path path_t;
+
+a_star_err a_star(
+    position_t start, position_t goal, const field_t grid, path_t *out_path
+);
 
 #endif
