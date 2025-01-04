@@ -4,6 +4,7 @@ CFLAGS = -Wall -Wextra -std=c99 -O0 -g
 OBJ = src/main.o
 OBJ += src/priority_queue.o
 OBJ += src/map.o
+OBJ += src/a_star.o
 
 TARGET = main
 

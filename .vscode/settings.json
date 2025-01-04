@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "priority_queue.h": "c"
+        "priority_queue.h": "c",
+        "cmath": "c",
     },
     "editor.rulers": [80]
 }

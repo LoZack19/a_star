@@ -1,7 +1,10 @@
 #ifndef MAP_H
 #define MAP_H
 
-#define MAP_VALUE_TYPE double
+#include <stdbool.h>
+
+#include "point.h"
+#define MAP_VALUE_TYPE int
 
 #define MAP_SIZE 1024
 #define KEY_MAX_LENGTH 64
