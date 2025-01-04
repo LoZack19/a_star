@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "priority_queue.h"
+
 #define FIELD_ROWS 31
 #define FIELD_COLS 28
 
@@ -38,3 +40,47 @@ int field[FIELD_ROWS][FIELD_COLS] = {
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
+
+// Test the priority queue
+int main() {
+    priority_queue pq;
+    priority_queue_init(&pq);
+
+    if (priority_queue_push(&pq, 5, 100.5) != PQ_SUCCESS) {
+        printf("Error: Could not push element (queue may be full).\n");
+    }
+    if (priority_queue_push(&pq, 3, 200.25) != PQ_SUCCESS) {
+        printf("Error: Could not push element (queue may be full).\n");
+    }
+    if (priority_queue_push(&pq, 8, 300.75) != PQ_SUCCESS) {
+        printf("Error: Could not push element (queue may be full).\n");
+    }
+    if (priority_queue_push(&pq, 1, 400.125) != PQ_SUCCESS) {
+        printf("Error: Could not push element (queue may be full).\n");
+    }
+
+    heap_node top_node;
+    if (priority_queue_peek(&pq, &top_node) == PQ_SUCCESS) {
+        printf(
+            "Peek: Priority = %d, Data = %.3f\n",
+            top_node.priority,
+            top_node.data
+        );
+    } else {
+        printf("Error: Could not peek element (queue may be empty).\n");
+    }
+
+    while (!priority_queue_is_empty(&pq)) {
+        if (priority_queue_pop(&pq, &top_node) == PQ_SUCCESS) {
+            printf(
+                "Pop: Priority = %d, Data = %.3f\n",
+                top_node.priority,
+                top_node.data
+            );
+        } else {
+            printf("Error: Could not pop element (queue may be empty).\n");
+        }
+    }
+
+    return 0;
+}

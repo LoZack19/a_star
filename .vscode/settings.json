@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "priority_queue.h": "c"
+    },
+    "editor.rulers": [80]
+}
