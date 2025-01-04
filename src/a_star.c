@@ -8,31 +8,29 @@
 
 // Convert point to string for map key
 static void point_to_key(Point p, char *key) {
-    snprintf(key, KEY_MAX_LENGTH, "%d,%d", p.x, p.y);
+    snprintf(key, KEY_MAX_LENGTH, "%d,%d", p.column, p.row);
 }
 
 // Manhattan distance heuristic
 static double heuristic(Point a, Point b) {
-    return abs(a.x - b.x) + abs(a.y - b.y);
+    return abs(a.column - b.column) + abs(a.row - b.row);
 }
 
 // Check if a point is within grid bounds and walkable
-static bool is_valid_point(Point p, int rows, int cols,
-                           const int grid[rows][cols]) {
-    return p.x >= 0 && p.x < cols && p.y >= 0 && p.y < rows &&
-           grid[p.y][p.x] == CELL_PATH; // Explicitly check for path cell
+static bool is_valid_point(Point p, const field_t grid) {
+    return p.column >= 0 && p.column < FIELD_COLS && p.row >= 0 && p.row < FIELD_ROWS &&
+           grid[p.row][p.column] == CELL_PATH;
 }
 
 // Get valid neighbors of a point
-static a_star_err get_neighbors(Point p, int rows, int cols,
-                                const int grid[rows][cols], Point neighbors[4],
+static a_star_err get_neighbors(Point p, const field_t grid, Point neighbors[4],
                                 int *num_neighbors) {
     Point possible_moves[] = {
-        {p.x + 1, p.y}, {p.x - 1, p.y}, {p.x, p.y + 1}, {p.x, p.y - 1}};
+        {p.column + 1, p.row}, {p.column - 1, p.row}, {p.column, p.row + 1}, {p.column, p.row - 1}};
 
     *num_neighbors = 0;
     for (int i = 0; i < 4; i++) {
-        if (is_valid_point(possible_moves[i], rows, cols, grid)) {
+        if (is_valid_point(possible_moves[i], grid)) {
             neighbors[*num_neighbors] = possible_moves[i];
             (*num_neighbors)++;
         }
@@ -42,21 +40,21 @@ static a_star_err get_neighbors(Point p, int rows, int cols,
 }
 
 // Store point data in priority queue
-static MAP_VALUE_TYPE pack_point_data(Point p, int rows) {
-    return (MAP_VALUE_TYPE)(p.x * rows + p.y);
+static MAP_VALUE_TYPE pack_point_data(Point p) {
+    return (MAP_VALUE_TYPE)(p.column * FIELD_ROWS + p.row);
 }
 
 // Extract point from priority queue data
-static Point unpack_point_data(MAP_VALUE_TYPE data, int rows) {
+static Point unpack_point_data(MAP_VALUE_TYPE data) {
     Point p;
-    p.x = (MAP_VALUE_TYPE)(data / rows);
-    p.y = (MAP_VALUE_TYPE)(data % rows);
+    p.column = (MAP_VALUE_TYPE)(data / FIELD_ROWS);
+    p.row = (MAP_VALUE_TYPE)(data % FIELD_ROWS);
     return p;
 }
 
 // Reconstruct path from the pathToNode map
 static a_star_err reconstruct_path(fixed_size_map *path_map, Point current,
-                                   Path *out_path, int rows) {
+                                   Path *out_path) {
     char current_key[KEY_MAX_LENGTH];
     int next_point_data;
 
@@ -77,7 +75,7 @@ static a_star_err reconstruct_path(fixed_size_map *path_map, Point current,
             return ASTAR_PATH_TOO_LONG;
         }
 
-        current = unpack_point_data(next_point_data, rows);
+        current = unpack_point_data(next_point_data);
         out_path->points[out_path->length++] = current;
     }
 
@@ -92,13 +90,12 @@ static a_star_err reconstruct_path(fixed_size_map *path_map, Point current,
 }
 
 // A* implementation
-a_star_err a_star(Point start, Point goal, int rows, int cols,
-                  const int grid[rows][cols], Path *out_path) {
+a_star_err a_star(Point start, Point goal, const field_t grid, Path *out_path) {
     // Validate input parameters
-    if (!is_valid_point(start, rows, cols, grid)) {
+    if (!is_valid_point(start, grid)) {
         return ASTAR_INVALID_START;
     }
-    if (!is_valid_point(goal, rows, cols, grid)) {
+    if (!is_valid_point(goal, grid)) {
         return ASTAR_INVALID_GOAL;
     }
 
@@ -133,8 +130,8 @@ a_star_err a_star(Point start, Point goal, int rows, int cols,
         point_to_key(current, current_key);
 
         // Check if we reached the goal
-        if (current.x == goal.x && current.y == goal.y) {
-            return reconstruct_path(&came_from_map, current, out_path, rows);
+        if (current.column == goal.column && current.row == goal.row) {
+            return reconstruct_path(&came_from_map, current, out_path);
         }
 
         // Get current cost
@@ -148,7 +145,7 @@ a_star_err a_star(Point start, Point goal, int rows, int cols,
         Point neighbors[4];
         int num_neighbors;
         a_star_err err =
-            get_neighbors(current, rows, cols, grid, neighbors, &num_neighbors);
+            get_neighbors(current, grid, neighbors, &num_neighbors);
         if (err != ASTAR_SUCCESS) {
             return err;
         }
@@ -171,7 +168,7 @@ a_star_err a_star(Point start, Point goal, int rows, int cols,
 
             if (update_neighbor) {
                 // Update path and costs
-                double neighbor_data = pack_point_data(current, rows);
+                double neighbor_data = pack_point_data(current);
                 if (fixed_size_map_set(&came_from_map, neighbor_key,
                                        neighbor_data) != MAP_SUCCESS) {
                     return ASTAR_MAP_ERROR;

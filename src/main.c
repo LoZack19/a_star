@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "priority_queue.h"
 #include "map.h"
 #include "a_star.h"
 
-#define FIELD_ROWS 31
-#define FIELD_COLS 28
-
-int field[FIELD_ROWS][FIELD_COLS] = {
+field_t field = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1},
@@ -44,7 +42,7 @@ int field[FIELD_ROWS][FIELD_COLS] = {
 };
 
 Point point_from(int x, int y) {
-    Point p = {.x = x, .y = y};
+    Point p = {.column = x, .row = y};
     return p;
 }
 
@@ -71,8 +69,8 @@ int test_queue() {
         printf(
             "Peek: Priority = %d, Data = (%d,%d)\n",
             top_node.priority,
-            top_node.data.x,
-            top_node.data.y
+            top_node.data.column,
+            top_node.data.row
         );
     } else {
         printf("Error: Could not peek element (queue may be empty).\n");
@@ -83,8 +81,8 @@ int test_queue() {
             printf(
                 "Pop: Priority = %d, Data = (%d,%d)\n",
                 top_node.priority,
-                top_node.data.x,
-                top_node.data.y
+                top_node.data.column,
+                top_node.data.row
             );
         } else {
             printf("Error: Could not pop element (queue may be empty).\n");
@@ -131,22 +129,66 @@ int test_map() {
     return 0;
 }
 
-// Example usage
+void print_field_with_path(const field_t grid, const Path* path) {
+    // Create a copy of the grid to mark the path
+    field_t display_grid;
+    memcpy(display_grid, grid, FIELD_ROWS * FIELD_COLS * sizeof(int));
+    
+    // Mark path on the grid copy with '2'
+    if (path->length > 0) {
+        for (int i = 0; i < path->length; i++) {
+            Point p = path->points[i];
+            display_grid[p.row][p.column] = 2;
+        }
+    }
+    
+    // Print the grid with appropriate characters
+    for (int y = 0; y < FIELD_ROWS; y++) {
+        for (int x = 0; x < FIELD_COLS; x++) {
+            switch (display_grid[y][x]) {
+                case CELL_PATH:  // Empty path
+                    printf("  ");
+                    break;
+                case CELL_WALL:  // Wall
+                    printf("██");
+                    break;
+                case 2:          // Path found
+                    printf("••");
+                    break;
+                default:
+                    printf("??");
+            }
+        }
+        printf("\n");
+    }
+}
+
 int test_a_star() {
     Point start = {1, 1};
-    Point goal = {29, 26};
+    Point goal = {26, 29};
     Path path;
     
-    a_star_err result = a_star(start, goal, FIELD_ROWS, FIELD_COLS, field, &path);
+    // First print the original maze
+    printf("\nOriginal Maze:\n");
+    print_field_with_path(field, &(Path){.length = 0});
     
+    // Find the path
+    a_star_err result = a_star(start, goal, field, &path);
+    
+    // Print results
+    printf("\nA* Result: ");
     switch (result) {
         case ASTAR_SUCCESS:
-            printf("Path found! Length: %d\n", path.length);
+            printf("Path found! Length: %d\n\n", path.length);
+            print_field_with_path(field, &path);
+            
+            printf("\nPath coordinates: ");
             for (int i = 0; i < path.length; i++) {
-                printf("(%d,%d) ", path.points[i].x, path.points[i].y);
+                printf("(%d,%d) ", path.points[i].column, path.points[i].row);
             }
             printf("\n");
             break;
+            
         case ASTAR_NO_PATH_FOUND:
             printf("No path found\n");
             break;
@@ -171,7 +213,10 @@ int test_a_star() {
 }
 
 int main() {
+    puts(" --- TEST QUEUE --- ");
     test_queue();
+    puts(" --- TEST MAP --- ");
     test_map();
+    puts(" --- TEST A STAR --- ");
     test_a_star();
 }

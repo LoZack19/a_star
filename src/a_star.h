@@ -32,7 +32,6 @@ typedef struct {
     int length;
 } Path;
 
-a_star_err a_star(Point start, Point goal, int rows, int cols,
-                  const int grid[rows][cols], Path *out_path);
+a_star_err a_star(Point start, Point goal, const field_t grid, Path *out_path);
 
 #endif
