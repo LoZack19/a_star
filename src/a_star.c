@@ -22,7 +22,7 @@ static int32_t heuristic(position_t a, position_t b) {
 static bool is_valid_point(position_t p, const field_t grid) {
     return p.column < FIELD_COLS
         && p.row < FIELD_ROWS
-        && IS_CELL_PATH(grid[p.row][p.column]);
+        && CAN_TRAVERSE(grid[p.row][p.column]);
 }
 
 // Get valid neighbors of a point

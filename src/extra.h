@@ -6,7 +6,18 @@
 #define FIELD_ROWS 31
 #define FIELD_COLS 28
 
-typedef int field_t[FIELD_ROWS][FIELD_COLS];
+enum resource {
+    PATH = 0,
+    WALL = 1,
+    STANDARD_PILL = 2,
+    POWER_PILL = 3,
+    PACMAN = 4,
+};
+
+#define CAN_TRAVERSE(CELL) ((CELL) != WALL)
+#define CANT_TRAVERSE(CELL) ((CELL) == WALL)
+
+typedef enum resource field_t[FIELD_ROWS][FIELD_COLS];
 
 struct position {
     size_t row;

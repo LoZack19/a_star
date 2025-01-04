@@ -134,11 +134,10 @@ void print_field_with_path(const field_t grid, const path_t* path) {
     field_t display_grid;
     memcpy(display_grid, grid, FIELD_ROWS * FIELD_COLS * sizeof(int));
     
-    // Mark path on the grid copy with '2'
     if (path->length > 0) {
         for (int i = 0; i < path->length; i++) {
             position_t p = path->points[i];
-            display_grid[p.row][p.column] = 2;
+            display_grid[p.row][p.column] = -1;
         }
     }
     
@@ -146,13 +145,16 @@ void print_field_with_path(const field_t grid, const path_t* path) {
     for (int y = 0; y < FIELD_ROWS; y++) {
         for (int x = 0; x < FIELD_COLS; x++) {
             switch (display_grid[y][x]) {
-                case CELL_PATH:  // Empty path
+                case PATH:
+                case STANDARD_PILL:
+                case POWER_PILL:
+                case PACMAN:
                     printf("  ");
                     break;
-                case CELL_WALL:  // Wall
+                case WALL:
                     printf("██");
                     break;
-                case 2:          // Path found
+                case -1:
                     printf("••");
                     break;
                 default:

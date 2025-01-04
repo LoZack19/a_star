@@ -6,13 +6,6 @@
 #define MAX_PATH_LENGTH 1024
 #define MOVE_COST 1.0
 
-// Grid cell types
-#define CELL_PATH 0
-#define CELL_WALL 1
-
-#define IS_CELL_PATH(CELL) ((CELL) != CELL_WALL)
-#define IS_CELL_WALL(CELL) ((CELL) == CELL_WALL)
-
 // Error handling enum
 typedef enum {
     ASTAR_SUCCESS = 0,

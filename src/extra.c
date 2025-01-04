@@ -1,14 +1,6 @@
 #include <stdint.h>
 #include "extra.h"
 
-enum resource {
-    PATH = 0,
-    WALL = 1,
-    STANDARD_PILL = 2,
-    POWER_PILL = 3,
-    PACMAN = 4,
-};
-
 struct position position_next(struct position *size, struct position *start, enum direction direction) {
     struct position end;
     uint8_t drow = 0;
